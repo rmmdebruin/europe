@@ -1,0 +1,76 @@
+# Population Maps Project Rules
+
+## Project Structure
+- Monorepo with backend and frontend workspaces
+- Backend: Express.js API serving population data
+- Frontend: React + Vite with interactive maps
+- Data: World Bank CSV in /data directory
+
+## Coding Standards
+
+### General
+- Use ES modules (import/export)
+- Use async/await for async operations
+- Handle errors gracefully with try/catch
+- Keep functions small and focused
+- Add comments for complex logic
+
+### Backend
+- Keep routes in server.js
+- Business logic in services/
+- Use descriptive endpoint names
+- Always validate input
+- Cache expensive operations
+- Use proper HTTP status codes
+
+### Frontend
+- Functional components with hooks
+- Props validation where needed
+- Keep components under 200 lines
+- Separate logic from presentation
+- Use semantic HTML
+- Maintain accessibility
+
+### CSS
+- Component-specific CSS in component folder
+- Use meaningful class names
+- Follow BEM naming when applicable
+- Keep specificity low
+- Mobile-first responsive design
+- Use CSS variables for repeated values
+
+## File Organization
+- Components in frontend/src/components/
+- Each component has .jsx and .css file
+- Services in backend/src/services/
+- Shared utilities in separate files
+
+## Git Workflow
+- Write clear commit messages
+- Keep commits atomic and focused
+- Don't commit node_modules or .env
+- Use .gitignore properly
+
+## Performance
+- Backend: Cache processed data
+- Frontend: Minimize re-renders
+- Use React.memo for heavy components
+- Lazy load when appropriate
+
+## Dependencies
+- Minimal dependencies
+- Use standard libraries when possible
+- Keep packages updated
+- Document why each package is needed
+
+## Testing
+- Test API endpoints manually with curl
+- Test frontend in browser
+- Check responsive design
+- Verify error states
+
+## Documentation
+- README.md for overview
+- DEVELOPMENT.md for dev guide
+- Comments for non-obvious code
+- Update docs when adding features
