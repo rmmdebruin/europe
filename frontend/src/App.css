@@ -37,30 +37,35 @@
 /* Toggle Controls Container */
 .view-toggle {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px) saturate(180%);
-  padding: 8px;
+  padding: 10px;
   border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
   flex-shrink: 0;
+  justify-content: center;
+  max-width: 100%;
 }
 
 .toggle-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 12px 20px;
   border: none;
   border-radius: 50px;
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  min-width: 140px;
 }
 
 .toggle-btn:hover {
@@ -123,6 +128,61 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   left: 4px;
   top: 3px;
+}
+
+/* R&D Icon - Microscope/Flask styled */
+.rnd-icon::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(30% 0%, 70% 0%, 70% 40%, 85% 60%, 85% 100%, 15% 100%, 15% 60%, 30% 40%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 5px;
+  top: 4px;
+}
+
+/* High-Tech Icon - Microchip styled */
+.hightech-icon::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  clip-path: polygon(
+    25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 35%, 75% 35%, 75% 65%, 100% 65%, 100% 75%, 75% 75%, 75% 100%, 25% 100%,
+    25% 75%, 0% 75%, 0% 65%, 25% 65%, 25% 35%, 0% 35%, 0% 25%, 25% 25%
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 3px;
+  top: 3px;
+}
+
+/* Renewable Icon - Lightning bolt styled */
+.renewable-icon::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  background: currentColor;
+  clip-path: polygon(60% 0%, 100% 40%, 65% 40%, 80% 100%, 0% 60%, 40% 60%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 5px;
+  top: 2px;
+}
+
+/* Education Icon - Graduation cap styled */
+.education-icon::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 12px;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 65%, 85% 70%, 85% 85%, 50% 100%, 15% 85%, 15% 70%, 0% 65%, 0% 25%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 2px;
+  top: 4px;
 }
 
 .map-container {
@@ -365,6 +425,14 @@
   font-weight: 400;
 }
 
+.country-stat-year {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 2px;
+}
+
 @media (max-width: 900px) {
   .map-container {
     grid-template-columns: 1fr !important;
@@ -389,13 +457,14 @@
   }
 
   .toggle-btn {
-    padding: 10px 18px;
-    font-size: 0.9rem;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    min-width: 100px;
   }
 
   .toggle-icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
   
   .gdp-icon::before {
@@ -434,18 +503,20 @@
   }
 
   .toggle-btn {
-    padding: 8px 14px;
-    font-size: 0.85rem;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    min-width: 90px;
+    gap: 4px;
   }
 
   .view-toggle {
-    padding: 6px;
+    padding: 8px;
     gap: 6px;
   }
 
   .toggle-icon {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .gdp-icon::before {

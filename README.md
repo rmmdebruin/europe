@@ -8,16 +8,19 @@ A modern, interactive web application comparing population data between the Unit
 ## Features
 
 - **Interactive Maps**: Beautiful, clickable maps of the US and Europe
-- **Real-time Updates**: Dynamic population, GDP, and defense budget calculations based on user selection
-- **Triple View Modes**: Toggle between Population, GDP, and Defense Budget views
-- **Defense Budget Analysis**: Absolute defense spending with percentage of GDP and per capita calculations
-- **GDP in Euros**: All GDP and defense values displayed in EUR (€) with live exchange rates
-- **GDP Per Capita**: Smart calculation showing economic output per person
+- **Real-time Updates**: Dynamic calculations across all metrics based on user selection
+- **7 View Modes**: Population, GDP, Defense, R&D, High-Tech Exports, Renewable Energy, Education
+- **Innovation Metrics**: R&D spending shows investment in future competitiveness
+- **Industrial Strength**: High-tech exports demonstrate advanced manufacturing capability
+- **Energy Independence**: Renewable energy percentage highlights climate leadership
+- **Human Capital**: Education attainment shows societal investment in people
+- **Defense Analysis**: Absolute spending with per capita and percentage breakdowns
+- **GDP in Euros**: All monetary values displayed in EUR (€) with live exchange rates
+- **Smart Calculations**: Per capita values and percentage contexts for meaningful comparisons
 - **Color-Coded Display**: Red for US, blue for Europe across all metrics
 - **Glassmorphism Design**: Modern UI with frosted glass effects and custom icons
-- **2024 Data**: Most recent population, GDP, and defense data from World Bank
-- **Live Exchange Rates**: Always up-to-date USD to EUR conversions
-- **Responsive**: Works seamlessly on desktop and mobile devices
+- **2024 Data**: Most recent data from World Bank across all categories
+- **Responsive**: Works seamlessly on desktop and mobile devices with wrapping toggle buttons
 
 ## Tech Stack
 
@@ -272,20 +275,38 @@ Economic and demographic data sourced from the World Bank's World Development In
 **GDP Data:**
 - Dataset: GDP (current US$) (NY.GDP.MKTP.CD)
 - Year: 2024 (most recent)
-- Last Updated: December 19, 2025
 
 **Defense Budget Data:**
 - Dataset: Military expenditure (% of GDP) (MS.MIL.XPND.GD.ZS)
-- Year: 2024 (most recent)
-- Last Updated: December 19, 2025
+- Year: 2024
 - Calculation: Absolute spending = GDP × (Defense % / 100)
+
+**R&D Spending Data:**
+- Dataset: Research and development expenditure (% of GDP) (GB.XPD.RSDV.GD.ZS)
+- Year: 2024
+- Calculation: Absolute spending = GDP × (R&D % / 100)
+
+**High-Tech Exports Data:**
+- Dataset: High-technology exports (% of manufactured exports) (TX.VAL.TECH.MF.ZS)
+- Year: 2024
+- Shows: Industrial sophistication and advanced manufacturing capability
+
+**Renewable Energy Data:**
+- Dataset: Renewable electricity output (% of total electricity output) (EG.ELC.RNEW.ZS)
+- Year: 2024
+- Shows: Progress toward energy independence and climate goals
+
+**Education Data:**
+- Dataset: Educational attainment, upper secondary, population 25+ (%) (SE.SEC.CUAT.UP.ZS)
+- Year: 2024
+- Shows: Human capital development and societal investment
 
 **Exchange Rates:**
 - Source: exchangerate-api.com
 - Updates: Daily (cached for 24 hours)
 - Fallback rate: 0.92 EUR per USD (if API unavailable)
 
-All GDP and defense values are sourced in US dollars and automatically converted to euros (€) for display using live exchange rates.
+All monetary values (GDP, Defense, R&D) are sourced in US dollars and automatically converted to euros (€) for display.
 
 ## Browser Support
 

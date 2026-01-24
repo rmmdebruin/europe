@@ -45,13 +45,30 @@ export async function getPopulationData() {
     european: []
   };
 
-  // Find the most recent year with data (2024 based on the data we saw)
-  const latestYear = '2024';
+  // Try years in descending order to find most recent data
+  const yearsToTry = ['2024', '2023', '2022', '2021', '2020'];
 
   for (const record of records) {
     const countryCode = record['Country Code'];
     const countryName = record['Country Name'];
-    const population = parseInt(record[latestYear], 10);
+    
+    // Find the most recent year with data for this country
+    let populationValue = null;
+    let dataYear = null;
+    for (const year of yearsToTry) {
+      const value = record[year];
+      if (value && value.trim() !== '') {
+        populationValue = value;
+        dataYear = year;
+        break;
+      }
+    }
+    
+    if (!populationValue) {
+      continue;
+    }
+    
+    const population = parseInt(populationValue, 10);
 
     if (isNaN(population)) {
       continue;
@@ -61,13 +78,15 @@ export async function getPopulationData() {
       result.us = {
         code: countryCode,
         name: countryName,
-        population: population
+        population: population,
+        year: dataYear
       };
     } else if (EUROPEAN_COUNTRIES.includes(countryCode)) {
       result.european.push({
         code: countryCode,
         name: countryName,
-        population: population
+        population: population,
+        year: dataYear
       });
     }
   }

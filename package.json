@@ -1,7 +1,7 @@
 {
   "name": "population-maps",
-  "version": "1.0.0",
-  "description": "Interactive population, GDP, and defense budget comparison maps for US and Europe with glassmorphism design",
+  "version": "2.0.0",
+  "description": "Interactive comparison tool for US vs Europe across population, GDP, defense, R&D, high-tech, renewable energy, and education metrics",
   "private": true,
   "author": "",
   "license": "MIT",

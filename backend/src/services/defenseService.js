@@ -45,16 +45,26 @@ export async function getDefensePercentageData() {
     european: []
   };
 
-  // Find the most recent year with data (2024)
-  const latestYear = '2024';
+  // Try years in descending order to find most recent data
+  const yearsToTry = ['2024', '2023', '2022', '2021', '2020'];
 
   for (const record of records) {
     const countryCode = record['Country Code'];
     const countryName = record['Country Name'];
-    const percentageValue = record[latestYear];
     
-    // Parse defense percentage - handle empty strings and invalid numbers
-    if (!percentageValue || percentageValue.trim() === '') {
+    // Find the most recent year with data for this country
+    let percentageValue = null;
+    let dataYear = null;
+    for (const year of yearsToTry) {
+      const value = record[year];
+      if (value && value.trim() !== '') {
+        percentageValue = value;
+        dataYear = year;
+        break;
+      }
+    }
+    
+    if (!percentageValue) {
       continue;
     }
     
@@ -68,13 +78,15 @@ export async function getDefensePercentageData() {
       result.us = {
         code: countryCode,
         name: countryName,
-        defensePercentage: defensePercentage
+        defensePercentage: defensePercentage,
+        year: dataYear
       };
     } else if (EUROPEAN_COUNTRIES.includes(countryCode)) {
       result.european.push({
         code: countryCode,
         name: countryName,
-        defensePercentage: defensePercentage
+        defensePercentage: defensePercentage,
+        year: dataYear
       });
     }
   }

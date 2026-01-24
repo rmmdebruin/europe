@@ -4,6 +4,10 @@ import { getPopulationData } from './services/populationService.js';
 import { getGDPData } from './services/gdpService.js';
 import { getExchangeRate } from './services/exchangeRateService.js';
 import { getDefensePercentageData } from './services/defenseService.js';
+import { getRnDPercentageData } from './services/rndService.js';
+import { getHighTechExportsData } from './services/highTechService.js';
+import { getRenewableEnergyData } from './services/renewableService.js';
+import { getEducationData } from './services/educationService.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -49,41 +53,72 @@ app.get('/api/exchange-rate', async (req, res) => {
   }
 });
 
-// Get combined data (population + GDP + defense) for all countries
+// Get combined data (population + GDP + defense + R&D + hightech + renewable + education) for all countries
 app.get('/api/combined', async (req, res) => {
   try {
-    const [populationData, gdpData, defenseData, exchangeRate] = await Promise.all([
+    const [
+      populationData,
+      gdpData,
+      defenseData,
+      rndData,
+      highTechData,
+      renewableData,
+      educationData,
+      exchangeRate
+    ] = await Promise.all([
       getPopulationData(),
       getGDPData(),
       getDefensePercentageData(),
+      getRnDPercentageData(),
+      getHighTechExportsData(),
+      getRenewableEnergyData(),
+      getEducationData(),
       getExchangeRate()
     ]);
 
-    // Merge the data and calculate absolute defense spending
+    // Merge the data and calculate absolute values
     const result = {
       us: {
         ...populationData.us,
         gdp: gdpData.us?.gdp || 0,
-        defensePercentage: defenseData.us?.defensePercentage || 0
+        defensePercentage: defenseData.us?.defensePercentage || 0,
+        rndPercentage: rndData.us?.rndPercentage || 0,
+        highTechExports: highTechData.us?.highTechExports || 0,
+        highTechPercentage: highTechData.us?.highTechPercentage || 0,
+        renewablePercentage: renewableData.us?.renewablePercentage || 0,
+        educationPercentage: educationData.us?.educationPercentage || 0
       },
       european: populationData.european.map(popCountry => {
         const gdpCountry = gdpData.european.find(g => g.code === popCountry.code);
         const defenseCountry = defenseData.european.find(d => d.code === popCountry.code);
+        const rndCountry = rndData.european.find(r => r.code === popCountry.code);
+        const highTechCountry = highTechData.european.find(h => h.code === popCountry.code);
+        const renewableCountry = renewableData.european.find(r => r.code === popCountry.code);
+        const educationCountry = educationData.european.find(e => e.code === popCountry.code);
+        
         const gdp = gdpCountry?.gdp || 0;
         const defensePercentage = defenseCountry?.defensePercentage || 0;
+        const rndPercentage = rndCountry?.rndPercentage || 0;
         
         return {
           ...popCountry,
           gdp: gdp,
           defensePercentage: defensePercentage,
-          defenseSpending: gdp * (defensePercentage / 100) // Calculate absolute spending
+          defenseSpending: gdp * (defensePercentage / 100),
+          rndPercentage: rndPercentage,
+          rndSpending: gdp * (rndPercentage / 100),
+          highTechExports: highTechCountry?.highTechExports || 0,
+          highTechPercentage: highTechCountry?.highTechPercentage || 0,
+          renewablePercentage: renewableCountry?.renewablePercentage || 0,
+          educationPercentage: educationCountry?.educationPercentage || 0
         };
       }),
       exchangeRate: exchangeRate
     };
 
-    // Calculate absolute defense spending for US
+    // Calculate absolute spending for US
     result.us.defenseSpending = result.us.gdp * (result.us.defensePercentage / 100);
+    result.us.rndSpending = result.us.gdp * (result.us.rndPercentage / 100);
 
     res.json(result);
   } catch (error) {
