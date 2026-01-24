@@ -8,9 +8,14 @@ A modern, interactive web application comparing population data between the Unit
 ## Features
 
 - **Interactive Maps**: Beautiful, clickable maps of the US and Europe
-- **Real-time Updates**: Dynamic population calculations based on user selection
-- **Glassmorphism Design**: Modern UI with frosted glass effects
-- **2024 Data**: Most recent population data from World Bank
+- **Real-time Updates**: Dynamic population and GDP calculations based on user selection
+- **Dual View Modes**: Toggle between Population and GDP views with a single click
+- **GDP in Euros**: All GDP values displayed in EUR (€) with live exchange rates
+- **GDP Per Capita**: Smart calculation showing economic output per person
+- **Color-Coded Display**: Red for US, blue for Europe in both population and GDP modes
+- **Glassmorphism Design**: Modern UI with frosted glass effects and custom icons
+- **2024 Data**: Most recent population and GDP data from World Bank
+- **Live Exchange Rates**: Always up-to-date USD to EUR conversions
 - **Responsive**: Works seamlessly on desktop and mobile devices
 
 ## Tech Stack
@@ -34,7 +39,8 @@ europe/
 │   ├── src/
 │   │   ├── server.js              # Express server
 │   │   └── services/
-│   │       └── populationService.js  # Data processing
+│   │       ├── populationService.js  # Population data processing
+│   │       └── gdpService.js         # GDP data processing
 │   └── package.json
 ├── frontend/
 │   ├── src/
@@ -51,7 +57,8 @@ europe/
 │   ├── vite.config.js
 │   └── package.json
 ├── data/
-│   └── API_SP.POP.TOTL_DS2_en_csv_v2_174326.csv
+│   ├── API_SP.POP.TOTL_DS2_en_csv_v2_174326.csv    # Population data
+│   └── API_NY.GDP.MKTP.CD_DS2_en_csv_v2_174428.csv # GDP data
 ├── package.json                   # Root workspace config
 └── README.md
 ```
@@ -148,34 +155,127 @@ Get population data for US and European countries.
 }
 ```
 
+### GET /api/gdp
+Get GDP data for US and European countries.
+
+**Response:**
+```json
+{
+  "us": {
+    "code": "USA",
+    "name": "United States",
+    "gdp": 28783100000000
+  },
+  "european": [
+    {
+      "code": "FRA",
+      "name": "France",
+      "gdp": 3130900000000
+    },
+    ...
+  ]
+}
+```
+
+### GET /api/exchange-rate
+Get current USD to EUR exchange rate.
+
+**Response:**
+```json
+{
+  "rate": 0.92,
+  "lastUpdated": "2024-01-24",
+  "source": "exchangerate-api.com"
+}
+```
+
+### GET /api/combined
+Get combined population and GDP data for all countries (recommended endpoint).
+
+**Response:**
+```json
+{
+  "us": {
+    "code": "USA",
+    "name": "United States",
+    "population": 340110988,
+    "gdp": 28783100000000
+  },
+  "european": [
+    {
+      "code": "FRA",
+      "name": "France",
+      "population": 68372286,
+      "gdp": 3130900000000
+    },
+    ...
+  ],
+  "exchangeRate": {
+    "rate": 0.92,
+    "lastUpdated": "2024-01-24",
+    "source": "exchangerate-api.com"
+  }
+}
+```
+
 ## How It Works
 
 ### Backend
-1. Reads World Bank population CSV data
-2. Filters and processes data for US and European countries
-3. Caches processed data in memory
-4. Serves data through REST API
+1. Reads World Bank CSV data for both population and GDP
+2. Fetches live exchange rates from exchangerate-api.com
+3. Filters and processes data for US and European countries
+4. Caches processed data in memory for performance
+5. Serves data through REST API with four endpoints:
+   - `/api/population` - Population data only
+   - `/api/gdp` - GDP data only
+   - `/api/exchange-rate` - Current USD to EUR rate
+   - `/api/combined` - All datasets merged (used by frontend)
 
 ### Frontend
-1. Fetches population data from backend
-2. Renders US map with total population (static display)
+1. Fetches combined population, GDP, and exchange rate data from backend
+2. Renders US map with total values (static display)
 3. Renders Europe map with interactive country selection
-4. Calculates and displays sum of selected European countries
-5. Updates in real-time as user clicks countries
+4. **View Mode Toggle**: Switch between Population and GDP views
+5. **Smart Calculations**:
+   - Population: Shows total count
+   - GDP: Shows total in billions/trillions format (EUR €)
+   - GDP per capita: Automatically calculated for selected countries
+   - Currency conversion: Automatic conversion from USD to EUR using live exchange rates
+6. **Color Coding**: Red (#ff6b6b) for US numbers, Blue (#6baafe) for Europe numbers
+7. Updates in real-time as user clicks countries
+8. Displays detailed breakdown in the country list sidebar
 
 ### Styling
 - Glassmorphism effects using `backdrop-filter` and transparency
 - US map: Red-ish tones (#ff6b6b)
 - Europe map: Blue-ish tones (#6baafe)
+- US numbers: Red color (#ff6b6b)
+- Europe numbers: Blue color (#6baafe)
+- Custom glassmorphic icons for toggle buttons (population dots, dollar sign)
+- Toggle buttons: Clean pill design with smooth transitions
 - Responsive design with CSS Grid
 - Smooth transitions and hover effects
 
 ## Data Source
 
-Population data sourced from the World Bank's World Development Indicators:
+Economic and demographic data sourced from the World Bank's World Development Indicators:
+
+**Population Data:**
 - Dataset: Total Population (SP.POP.TOTL)
 - Year: 2024 (most recent)
 - Last Updated: December 19, 2025
+
+**GDP Data:**
+- Dataset: GDP (current US$) (NY.GDP.MKTP.CD)
+- Year: 2024 (most recent)
+- Last Updated: December 19, 2025
+
+**Exchange Rates:**
+- Source: exchangerate-api.com
+- Updates: Daily (cached for 24 hours)
+- Fallback rate: 0.92 EUR per USD (if API unavailable)
+
+All GDP values are sourced in US dollars and automatically converted to euros (€) for display using live exchange rates.
 
 ## Browser Support
 
@@ -187,12 +287,14 @@ Note: Glassmorphism effects require modern browsers with `backdrop-filter` suppo
 
 ## Future Enhancements
 
-- Add country tooltips with names
-- Include historical data and trends
-- Add zoom and pan controls
-- Export selected data
+- Add country tooltips with names on hover
+- Include historical data and trends for both population and GDP
+- Add zoom and pan controls for maps
+- Export selected data to CSV/JSON
 - Dark/light mode toggle
+- Additional metrics (GDP growth rate, population density)
 - Additional regions (Asia, Africa, etc.)
+- Comparison charts and visualizations
 
 ## License
 

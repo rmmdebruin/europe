@@ -1,7 +1,7 @@
 {
   "name": "population-maps",
   "version": "1.0.0",
-  "description": "Interactive population comparison maps for US and Europe with glassmorphism design",
+  "description": "Interactive population and GDP comparison maps for US and Europe with glassmorphism design",
   "private": true,
   "author": "",
   "license": "MIT",
