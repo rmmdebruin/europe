@@ -85,11 +85,11 @@ function EuropeMap({ countries, selectedCountries, onCountryClick }) {
         projection="geoAzimuthalEqualArea"
         projectionConfig={{
           rotate: [-20.0, -52.0, 0],
-          scale: 880,
+          scale: 968,
           center: [-2, 0],
         }}
-        width={800}
-        height={600}
+        width={880}
+        height={660}
       >
         <ZoomableGroup center={[0, 0]} zoom={1}>
           <Geographies geography={geoUrl}>
