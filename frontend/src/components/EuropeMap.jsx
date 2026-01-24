@@ -85,7 +85,7 @@ function EuropeMap({ countries, selectedCountries, onCountryClick }) {
         projection="geoAzimuthalEqualArea"
         projectionConfig={{
           rotate: [-20.0, -52.0, 0],
-          scale: 968,
+          scale: 970,
           center: [-2, 0],
         }}
         width={880}
