@@ -3,6 +3,7 @@ import cors from 'cors';
 import { getPopulationData } from './services/populationService.js';
 import { getGDPData } from './services/gdpService.js';
 import { getExchangeRate } from './services/exchangeRateService.js';
+import { getDefensePercentageData } from './services/defenseService.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -48,30 +49,41 @@ app.get('/api/exchange-rate', async (req, res) => {
   }
 });
 
-// Get combined data (population + GDP) for all countries
+// Get combined data (population + GDP + defense) for all countries
 app.get('/api/combined', async (req, res) => {
   try {
-    const [populationData, gdpData, exchangeRate] = await Promise.all([
+    const [populationData, gdpData, defenseData, exchangeRate] = await Promise.all([
       getPopulationData(),
       getGDPData(),
+      getDefensePercentageData(),
       getExchangeRate()
     ]);
 
-    // Merge the data
+    // Merge the data and calculate absolute defense spending
     const result = {
       us: {
         ...populationData.us,
-        gdp: gdpData.us?.gdp || 0
+        gdp: gdpData.us?.gdp || 0,
+        defensePercentage: defenseData.us?.defensePercentage || 0
       },
       european: populationData.european.map(popCountry => {
         const gdpCountry = gdpData.european.find(g => g.code === popCountry.code);
+        const defenseCountry = defenseData.european.find(d => d.code === popCountry.code);
+        const gdp = gdpCountry?.gdp || 0;
+        const defensePercentage = defenseCountry?.defensePercentage || 0;
+        
         return {
           ...popCountry,
-          gdp: gdpCountry?.gdp || 0
+          gdp: gdp,
+          defensePercentage: defensePercentage,
+          defenseSpending: gdp * (defensePercentage / 100) // Calculate absolute spending
         };
       }),
       exchangeRate: exchangeRate
     };
+
+    // Calculate absolute defense spending for US
+    result.us.defenseSpending = result.us.gdp * (result.us.defensePercentage / 100);
 
     res.json(result);
   } catch (error) {

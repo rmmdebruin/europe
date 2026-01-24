@@ -8,7 +8,7 @@ function App() {
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [viewMode, setViewMode] = useState('population'); // 'population' or 'gdp'
+  const [viewMode, setViewMode] = useState('population'); // 'population', 'gdp', or 'defense'
 
   useEffect(() => {
     fetchCombinedData();
@@ -42,11 +42,12 @@ function App() {
   };
 
   const calculateEuropeanTotal = () => {
-    if (!combinedData) return { population: 0, gdp: 0 };
+    if (!combinedData) return { population: 0, gdp: 0, defenseSpending: 0 };
     const filtered = combinedData.european.filter(country => selectedCountries.has(country.code));
     return {
       population: filtered.reduce((sum, country) => sum + country.population, 0),
-      gdp: filtered.reduce((sum, country) => sum + (country.gdp || 0), 0)
+      gdp: filtered.reduce((sum, country) => sum + (country.gdp || 0), 0),
+      defenseSpending: filtered.reduce((sum, country) => sum + (country.defenseSpending || 0), 0)
     };
   };
 
@@ -83,6 +84,19 @@ function App() {
     return `€${Math.round(perCapita).toLocaleString('en-US')}`;
   };
 
+  const formatDefense = (defense) => {
+    const amount = convertToEUR(defense);
+    const billion = amount / 1e9;
+    return `€${billion.toFixed(1)}B`;
+  };
+
+  const formatDefensePerCapita = (defense, population) => {
+    if (population === 0) return '€0';
+    const amount = convertToEUR(defense);
+    const perCapita = amount / population;
+    return `€${Math.round(perCapita).toLocaleString('en-US')}`;
+  };
+
   if (loading) {
     return (
       <div className="app loading">
@@ -105,7 +119,9 @@ function App() {
   // Determine if Europe exceeds US based on current view mode
   const europeExceedsUS = viewMode === 'population' 
     ? europeanTotal.population > combinedData.us.population
-    : europeanTotal.gdp > combinedData.us.gdp;
+    : viewMode === 'gdp'
+    ? europeanTotal.gdp > combinedData.us.gdp
+    : europeanTotal.defenseSpending > combinedData.us.defenseSpending;
 
   return (
     <div className="app">
@@ -125,6 +141,13 @@ function App() {
           <span className="toggle-icon gdp-icon"></span>
           GDP
         </button>
+        <button
+          className={`toggle-btn ${viewMode === 'defense' ? 'active' : ''}`}
+          onClick={() => setViewMode('defense')}
+        >
+          <span className="toggle-icon defense-icon"></span>
+          Defense
+        </button>
       </div>
 
       <div className="map-container">
@@ -140,14 +163,27 @@ function App() {
                   </p>
                   <p className="population-label">Total Population (2024)</p>
                 </>
-              ) : (
+              ) : viewMode === 'gdp' ? (
                 <>
-                  <p className="population-number gdp-number">
+                  <p className="population-number">
                     {formatGDP(combinedData.us.gdp)}
                   </p>
                   <p className="population-label">Total GDP (2024)</p>
                   <p className="gdp-per-capita">
                     {formatGDPPerCapita(combinedData.us.gdp, combinedData.us.population)} per capita
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="population-number">
+                    {formatDefense(combinedData.us.defenseSpending)}
+                  </p>
+                  <p className="population-label">Defense Budget (2024)</p>
+                  <p className="gdp-per-capita">
+                    {formatDefensePerCapita(combinedData.us.defenseSpending, combinedData.us.population)} per capita
+                  </p>
+                  <p className="defense-percentage">
+                    {combinedData.us.defensePercentage.toFixed(2)}% of GDP
                   </p>
                 </>
               )}
@@ -181,9 +217,9 @@ function App() {
                       : 'Click countries to see population'}
                   </p>
                 </>
-              ) : (
+              ) : viewMode === 'gdp' ? (
                 <>
-                  <p className="population-number gdp-number">
+                  <p className="population-number">
                     {selectedCountries.size > 0 
                       ? formatGDP(europeanTotal.gdp)
                       : '—'}
@@ -196,6 +232,29 @@ function App() {
                   {selectedCountries.size > 0 && europeanTotal.population > 0 && (
                     <p className="gdp-per-capita">
                       {formatGDPPerCapita(europeanTotal.gdp, europeanTotal.population)} per capita
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="population-number">
+                    {selectedCountries.size > 0 
+                      ? formatDefense(europeanTotal.defenseSpending)
+                      : '—'}
+                  </p>
+                  <p className="population-label">
+                    {selectedCountries.size > 0
+                      ? `Selected ${selectedCountries.size} ${selectedCountries.size === 1 ? 'country' : 'countries'} (2024)`
+                      : 'Click countries to see defense budget'}
+                  </p>
+                  {selectedCountries.size > 0 && europeanTotal.population > 0 && (
+                    <p className="gdp-per-capita">
+                      {formatDefensePerCapita(europeanTotal.defenseSpending, europeanTotal.population)} per capita
+                    </p>
+                  )}
+                  {selectedCountries.size > 0 && europeanTotal.gdp > 0 && (
+                    <p className="defense-percentage">
+                      {((europeanTotal.defenseSpending / europeanTotal.gdp) * 100).toFixed(2)}% of GDP
                     </p>
                   )}
                 </>
@@ -224,11 +283,21 @@ function App() {
                         <div className="country-name">{country.name}</div>
                         {viewMode === 'population' ? (
                           <div className="country-stat">{formatNumber(country.population)}</div>
-                        ) : (
+                        ) : viewMode === 'gdp' ? (
                           <div className="country-stat-group">
                             <div className="country-stat">{formatGDP(country.gdp)}</div>
                             <div className="country-stat-sub">
                               {formatGDPPerCapita(country.gdp, country.population)} per capita
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="country-stat-group">
+                            <div className="country-stat">{formatDefense(country.defenseSpending)}</div>
+                            <div className="country-stat-sub">
+                              {formatDefensePerCapita(country.defenseSpending, country.population)} per capita
+                            </div>
+                            <div className="country-stat-sub">
+                              {country.defensePercentage.toFixed(2)}% of GDP
                             </div>
                           </div>
                         )}

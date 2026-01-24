@@ -112,6 +112,19 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Defense Icon - Shield styled */
+.defense-icon::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 14px;
+  background: currentColor;
+  clip-path: polygon(50% 0%, 100% 20%, 100% 70%, 50% 100%, 0% 70%, 0% 20%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  left: 4px;
+  top: 3px;
+}
+
 .map-container {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr;
@@ -215,6 +228,15 @@
   margin-top: 4px;
   font-weight: 500;
   text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.defense-percentage {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+  font-weight: 400;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  font-style: italic;
 }
 
 .population-label {

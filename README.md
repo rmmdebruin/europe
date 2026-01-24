@@ -8,13 +8,14 @@ A modern, interactive web application comparing population data between the Unit
 ## Features
 
 - **Interactive Maps**: Beautiful, clickable maps of the US and Europe
-- **Real-time Updates**: Dynamic population and GDP calculations based on user selection
-- **Dual View Modes**: Toggle between Population and GDP views with a single click
-- **GDP in Euros**: All GDP values displayed in EUR (€) with live exchange rates
+- **Real-time Updates**: Dynamic population, GDP, and defense budget calculations based on user selection
+- **Triple View Modes**: Toggle between Population, GDP, and Defense Budget views
+- **Defense Budget Analysis**: Absolute defense spending with percentage of GDP and per capita calculations
+- **GDP in Euros**: All GDP and defense values displayed in EUR (€) with live exchange rates
 - **GDP Per Capita**: Smart calculation showing economic output per person
-- **Color-Coded Display**: Red for US, blue for Europe in both population and GDP modes
+- **Color-Coded Display**: Red for US, blue for Europe across all metrics
 - **Glassmorphism Design**: Modern UI with frosted glass effects and custom icons
-- **2024 Data**: Most recent population and GDP data from World Bank
+- **2024 Data**: Most recent population, GDP, and defense data from World Bank
 - **Live Exchange Rates**: Always up-to-date USD to EUR conversions
 - **Responsive**: Works seamlessly on desktop and mobile devices
 
@@ -221,26 +222,29 @@ Get combined population and GDP data for all countries (recommended endpoint).
 ## How It Works
 
 ### Backend
-1. Reads World Bank CSV data for both population and GDP
+1. Reads World Bank CSV data for population, GDP, and military expenditure
 2. Fetches live exchange rates from exchangerate-api.com
-3. Filters and processes data for US and European countries
-4. Caches processed data in memory for performance
-5. Serves data through REST API with four endpoints:
+3. Calculates absolute defense spending from GDP × defense percentage
+4. Filters and processes data for US and European countries
+5. Caches processed data in memory for performance
+6. Serves data through REST API with five endpoints:
    - `/api/population` - Population data only
    - `/api/gdp` - GDP data only
    - `/api/exchange-rate` - Current USD to EUR rate
-   - `/api/combined` - All datasets merged (used by frontend)
+   - `/api/defense` - Defense percentage data
+   - `/api/combined` - All datasets merged with calculated defense spending (used by frontend)
 
 ### Frontend
-1. Fetches combined population, GDP, and exchange rate data from backend
+1. Fetches combined population, GDP, defense, and exchange rate data from backend
 2. Renders US map with total values (static display)
 3. Renders Europe map with interactive country selection
-4. **View Mode Toggle**: Switch between Population and GDP views
+4. **View Mode Toggle**: Switch between Population, GDP, and Defense Budget views
 5. **Smart Calculations**:
    - Population: Shows total count
    - GDP: Shows total in billions/trillions format (EUR €)
-   - GDP per capita: Automatically calculated for selected countries
-   - Currency conversion: Automatic conversion from USD to EUR using live exchange rates
+   - Defense: Shows absolute spending in billions (EUR €)
+   - Per capita: Automatically calculated for both GDP and defense
+   - Defense %: Shows military expenditure as percentage of GDP
 6. **Color Coding**: Red (#ff6b6b) for US numbers, Blue (#6baafe) for Europe numbers
 7. Updates in real-time as user clicks countries
 8. Displays detailed breakdown in the country list sidebar
@@ -251,7 +255,7 @@ Get combined population and GDP data for all countries (recommended endpoint).
 - Europe map: Blue-ish tones (#6baafe)
 - US numbers: Red color (#ff6b6b)
 - Europe numbers: Blue color (#6baafe)
-- Custom glassmorphic icons for toggle buttons (population dots, dollar sign)
+- Custom glassmorphic icons for toggle buttons (population dots, euro sign, shield)
 - Toggle buttons: Clean pill design with smooth transitions
 - Responsive design with CSS Grid
 - Smooth transitions and hover effects
@@ -270,12 +274,18 @@ Economic and demographic data sourced from the World Bank's World Development In
 - Year: 2024 (most recent)
 - Last Updated: December 19, 2025
 
+**Defense Budget Data:**
+- Dataset: Military expenditure (% of GDP) (MS.MIL.XPND.GD.ZS)
+- Year: 2024 (most recent)
+- Last Updated: December 19, 2025
+- Calculation: Absolute spending = GDP × (Defense % / 100)
+
 **Exchange Rates:**
 - Source: exchangerate-api.com
 - Updates: Daily (cached for 24 hours)
 - Fallback rate: 0.92 EUR per USD (if API unavailable)
 
-All GDP values are sourced in US dollars and automatically converted to euros (€) for display using live exchange rates.
+All GDP and defense values are sourced in US dollars and automatically converted to euros (€) for display using live exchange rates.
 
 ## Browser Support
 
